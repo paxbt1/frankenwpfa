@@ -42,22 +42,29 @@ ENV FORCE_HTTPS=0
 ENV PHP_INI_SCAN_DIR=$PHP_INI_DIR/conf.d
 
 
+# After installing packages with apt-get, add the ionCube Loader installation
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    ghostscript \
-    curl \
-    libonig-dev \
-    libxml2-dev \
-    libcurl4-openssl-dev \
-    libssl-dev \
-    libzip-dev \
-    unzip \
-    git \
-    libjpeg-dev \
-    libwebp-dev \
-    libzip-dev \
-    libmemcached-dev \
-    zlib1g-dev
+ca-certificates \
+ghostscript \
+curl \
+libonig-dev \
+libxml2-dev \
+libcurl4-openssl-dev \
+libssl-dev \
+libzip-dev \
+unzip \
+git \
+libjpeg-dev \
+libwebp-dev \
+libzip-dev \
+libmemcached-dev \
+zlib1g-dev && \
+# Add ionCube Loader installation
+curl -fsSL https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz -o ioncube_loaders.tar.gz && \
+tar -xzf ioncube_loaders.tar.gz && \
+mv ioncube/ioncube_loader_lin_${PHP_VERSION}.so /usr/local/lib/php/extensions/no-debug-non-zts-$(php -r 'echo PHP_ZTS == "ZTS" ? "zts" : "nts";')-$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;') && \
+echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-$(php -r 'echo PHP_ZTS == "ZTS" ? "zts" : "nts";')-$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')/ioncube_loader_lin_${PHP_VERSION}.so" > /etc/php/${PHP_VERSION}/cli/conf.d/00-ioncube.ini && \
+rm -rf ioncube_loaders.tar.gz ioncube
 
 
 # install the PHP extensions we need (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
