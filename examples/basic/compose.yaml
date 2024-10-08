@@ -26,10 +26,8 @@ services:
       WORDPRESS_CONFIG_EXTRA: |
           define('WP_SITEURL', 'http://localhost:8100');
           define('WP_HOME', 'http://localhost:8100');
-          
     volumes:
-      - ./wp-content:/var/www/html/wp-content
-
+      - ./wp-content:/var/www/html/wp-content # This is the correct format
     depends_on:
       - db
     tty: true
@@ -57,6 +55,18 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-examplepass}
     depends_on:
       - db
+
+  caddy:
+    image: caddy:latest
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./wp-content:/var/www/html/wp-content
+    depends_on:
+      - wordpress
 
 volumes:
   dbwp:
